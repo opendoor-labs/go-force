@@ -170,6 +170,22 @@ type ChildRelationship struct {
 	RelationshipName    string `json:"relationshipName"`
 }
 
+type RestAPI interface {
+	DescribeSObjects() (map[string]*SObjectMetaData, error)
+	DescribeSObject(in SObject) (resp *SObjectDescription, err error)
+	GetSObject(id string, fields []string, out SObject) (err error)
+	InsertSObject(in SObject) (resp *SObjectResponse, err error)
+	UpdateSObject(id string, in SObject) (err error)
+	DeleteSObject(id string, in SObject) (err error)
+	GetSObjectByExternalId(id string, fields []string, out SObject) (err error)
+	UpsertSObjectByExternalId(id string, in SObject) (resp *SObjectResponse, err error)
+	DeleteSObjectByExternalId(idstring, in SObject) (err error)
+	GetInstanceURL() string
+	GetAccessToken() string
+	RefreshToken() error
+	HasAccess(objectNames []string) bool
+}
+
 func (forceApi *ForceApi) getApiResources() error {
 	uri := fmt.Sprintf(resourcesUri, forceApi.apiVersion)
 
