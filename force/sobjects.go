@@ -95,7 +95,7 @@ func (forceApi *ForceApi) InsertSObject(in SObject) (resp *SObjectResponse, err 
 func (forceApi *ForceApi) UpdateSObject(id string, in SObject) (err error) {
 	uri := strings.Replace(forceApi.apiSObjects[in.APIName()].URLs[rowTemplateKey], idKey, id, 1)
 
-	err = forceApi.Patch(uri, nil, in.(interface{}), nil)
+	_, err = forceApi.Patch(uri, nil, in.(interface{}), nil)
 
 	return
 }
@@ -122,12 +122,12 @@ func (forceApi *ForceApi) GetSObjectByExternalId(id string, fields []string, out
 	return
 }
 
-func (forceApi *ForceApi) UpsertSObjectByExternalId(id string, in SObject) (resp *SObjectResponse, err error) {
+func (forceApi *ForceApi) UpsertSObjectByExternalId(id string, in SObject) (responseCode *int, resp *SObjectResponse, err error) {
 	uri := fmt.Sprintf("%v/%v/%v", forceApi.apiSObjects[in.APIName()].URLs[sObjectKey],
 		in.ExternalIdAPIName(), id)
 
 	resp = &SObjectResponse{}
-	err = forceApi.Patch(uri, nil, in.(interface{}), resp)
+	responseCode, err = forceApi.Patch(uri, nil, in.(interface{}), resp)
 
 	return
 }
