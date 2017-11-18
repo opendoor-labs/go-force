@@ -122,7 +122,7 @@ func (forceApi *ForceApi) GetSObjectByExternalId(id string, fields []string, out
 	return
 }
 
-func (forceApi *ForceApi) UpsertSObjectByExternalId(id string, in SObject) (responseCode *int, resp *SObjectResponse, err error) {
+func (forceApi *ForceApi) UpsertSObjectByExternalId(id string, in SObject) (responseCode int, resp *SObjectResponse, err error) {
 	uri := fmt.Sprintf("%v/%v/%v", forceApi.apiSObjects[in.APIName()].URLs[sObjectKey],
 		in.ExternalIdAPIName(), id)
 
