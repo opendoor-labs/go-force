@@ -109,8 +109,12 @@ func (forceApi *ForceApi) DeleteSObject(id string, in SObject) (err error) {
 }
 
 func (forceApi *ForceApi) GetSObjectByExternalId(id string, fields []string, out SObject) (err error) {
+	return forceApi.GetSObjectBySpecificExternalId(id, fields, out.ExternalIdAPIName(), out)
+}
+
+func (forceApi *ForceApi) GetSObjectBySpecificExternalId(id string, fields []string, specificExternalId string, out SObject) (err error) {
 	uri := fmt.Sprintf("%v/%v/%v", forceApi.apiSObjects[out.APIName()].URLs[sObjectKey],
-		out.ExternalIdAPIName(), id)
+		specificExternalId, id)
 
 	params := url.Values{}
 	if len(fields) > 0 {
