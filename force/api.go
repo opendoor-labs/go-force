@@ -177,8 +177,8 @@ type RestAPI interface {
 	InsertSObject(in SObject) (resp *SObjectResponse, err error)
 	UpdateSObject(id string, in SObject) (err error)
 	DeleteSObject(id string, in SObject) (err error)
-	GetSObjectByExternalId(id string, fields []string, out SObject) (err error)
-	GetSObjectByspecificExternalType(id string, fields []string, specificExternalType string, out SObject) (err error)
+	GetSObjectByExternalId(id string, fields []string, out SObject) (statusCode int, err error)
+	GetSObjectByspecificExternalType(id string, fields []string, specificExternalType string, out SObject) (statusCode int, err error)
 	UpsertSObjectByExternalId(id string, in SObject) (statusCode int, resp *SObjectResponse, err error)
 	DeleteSObjectByExternalId(id string, in SObject) (err error)
 	GetInstanceURL() string
@@ -190,14 +190,15 @@ type RestAPI interface {
 func (forceApi *ForceApi) getApiResources() error {
 	uri := fmt.Sprintf(resourcesUri, forceApi.apiVersion)
 
-	return forceApi.Get(uri, nil, &forceApi.apiResources)
+	_, err := forceApi.Get(uri, nil, &forceApi.apiResources)
+	return err
 }
 
 func (forceApi *ForceApi) getApiSObjects() error {
 	uri := forceApi.apiResources[sObjectsKey]
 
 	list := &SObjectApiResponse{}
-	err := forceApi.Get(uri, nil, list)
+	_, err := forceApi.Get(uri, nil, list)
 	if err != nil {
 		return err
 	}
@@ -217,7 +218,7 @@ func (forceApi *ForceApi) getApiSObjectDescriptions() error {
 		uri := metaData.URLs[sObjectDescribeKey]
 
 		desc := &SObjectDescription{}
-		err := forceApi.Get(uri, nil, desc)
+		_, err := forceApi.Get(uri, nil, desc)
 		if err != nil {
 			return err
 		}
