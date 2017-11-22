@@ -20,9 +20,8 @@ const (
 
 // Get issues a GET to the specified path with the given params and put the
 // umarshalled (json) result in the third parameter
-func (forceApi *ForceApi) Get(path string, params url.Values, out interface{}) error {
-	_, err := forceApi.request("GET", path, params, nil, out)
-	return err
+func (forceApi *ForceApi) Get(path string, params url.Values, out interface{}) (int, error) {
+	return forceApi.request("GET", path, params, nil, out)
 }
 
 // Post issues a POST to the specified path with the given params and payload

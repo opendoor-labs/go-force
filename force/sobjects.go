@@ -41,7 +41,7 @@ func (forceApi *ForceApi) DescribeSObject(in SObject) (resp *SObjectDescription,
 		uri := sObjectMetaData.URLs[sObjectDescribeKey]
 
 		resp = &SObjectDescription{}
-		err = forceApi.Get(uri, nil, resp)
+		_, err = forceApi.Get(uri, nil, resp)
 		if err != nil {
 			return
 		}
@@ -78,7 +78,7 @@ func (forceApi *ForceApi) GetSObject(id string, fields []string, out SObject) (e
 		params.Add("fields", strings.Join(fields, ","))
 	}
 
-	err = forceApi.Get(uri, params, out.(interface{}))
+	_, err = forceApi.Get(uri, params, out.(interface{}))
 
 	return
 }
@@ -108,11 +108,11 @@ func (forceApi *ForceApi) DeleteSObject(id string, in SObject) (err error) {
 	return
 }
 
-func (forceApi *ForceApi) GetSObjectByExternalId(id string, fields []string, out SObject) (err error) {
+func (forceApi *ForceApi) GetSObjectByExternalId(id string, fields []string, out SObject) (statusCode int, err error) {
 	return forceApi.GetSObjectBySpecificExternalType(id, fields, out.ExternalIdAPIName(), out)
 }
 
-func (forceApi *ForceApi) GetSObjectBySpecificExternalType(id string, fields []string, specificExternalId string, out SObject) (err error) {
+func (forceApi *ForceApi) GetSObjectBySpecificExternalType(id string, fields []string, specificExternalId string, out SObject) (statusCode int, err error) {
 	uri := fmt.Sprintf("%v/%v/%v", forceApi.apiSObjects[out.APIName()].URLs[sObjectKey],
 		specificExternalId, id)
 
@@ -121,9 +121,7 @@ func (forceApi *ForceApi) GetSObjectBySpecificExternalType(id string, fields []s
 		params.Add("fields", strings.Join(fields, ","))
 	}
 
-	err = forceApi.Get(uri, params, out.(interface{}))
-
-	return
+	return forceApi.Get(uri, params, out.(interface{}))
 }
 
 func (forceApi *ForceApi) UpsertSObjectByExternalId(id string, in SObject) (responseCode int, resp *SObjectResponse, err error) {
