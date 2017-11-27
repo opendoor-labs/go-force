@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestWasNotFOund(t *testing.T) {
+func TestWasNotFound(t *testing.T) {
 	apiErr := ApiErrors{
 		&ApiError{ErrorCode: "NOT_FOUND"},
 	}
