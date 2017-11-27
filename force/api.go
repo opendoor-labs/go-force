@@ -178,7 +178,7 @@ type RestAPI interface {
 	UpdateSObject(id string, in SObject) (err error)
 	DeleteSObject(id string, in SObject) (err error)
 	GetSObjectByExternalId(id string, fields []string, out SObject) (statusCode int, err error)
-	GetSObjectByspecificExternalType(id string, fields []string, specificExternalType string, out SObject) (statusCode int, err error)
+	GetSObjectBySpecificExternalType(id string, fields []string, specificExternalType string, out SObject) (statusCode int, err error)
 	UpsertSObjectByExternalId(id string, in SObject) (statusCode int, resp *SObjectResponse, err error)
 	DeleteSObjectByExternalId(id string, in SObject) (err error)
 	GetInstanceURL() string
