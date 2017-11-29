@@ -56,7 +56,6 @@ func (e ApiError) Validate() bool {
 func WasNotFound(err error) (bool, error) {
 	apiErrors, ok := err.(ApiErrors)
 	if !ok || len(apiErrors) > 1 || len(apiErrors) < 1 {
-		fmt.Printf("ok: %v, len: %v", ok, len(apiErrors))
 		return false, err
 	}
 
