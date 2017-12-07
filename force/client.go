@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/opendoor-labs/go-force/force/parser"
 	"github.com/opendoor-labs/go-force/forcejson"
 )
 
@@ -111,7 +112,7 @@ func (forceApi *ForceApi) request(method, path string, params url.Values, payloa
 	// Attempt to parse response into out
 	var objectUnmarshalErr error
 	if out != nil {
-		objectUnmarshalErr = forcejson.Unmarshal(respBytes, out)
+		objectUnmarshalErr = parser.ParseSFJSON(respBytes, out)
 		if objectUnmarshalErr == nil {
 			return statusCode, nil
 		}
