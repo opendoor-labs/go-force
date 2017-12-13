@@ -27,6 +27,12 @@ func IsSlicePtr(i interface{}) (isptr bool) {
 // (e.g. [{}, {}, ...]) when multiple objects match the query.  Instead
 // of requiring client code to know that SFDC returns different types
 // based on number of results, allow clients to always pass in a slice.
+//
+// Summary of parsing results given out object types:
+//   single json object, out *slice -> *[T1]
+//   json array of objects, out *slice -> *[T1, T2, ...]
+//   single json object, out struct -> T
+//   json array of objects, out slice -> error
 func ParseSFJSON(msg []byte, out interface{}) error {
 	err := forcejson.Unmarshal(msg, out)
 
@@ -35,7 +41,7 @@ func ParseSFJSON(msg []byte, out interface{}) error {
 	}
 
 	if !IsSlicePtr(out) {
-		return err
+		return errors.Wrap(err, "'out' is not a pointer to a slice")
 	}
 
 	// pointer to the slice
