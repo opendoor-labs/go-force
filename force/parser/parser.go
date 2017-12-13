@@ -20,6 +20,13 @@ func IsSlicePtr(i interface{}) (isptr bool) {
 	return true
 }
 
+// ParseSFJSON allows a slice of the expected json type to be passed
+// in that will be populated with a object(s) parsed out of msg.  The
+// motivation for this is that SFDC returns a single object (e.g. {})
+// when only one object matches the query, but an array of objects
+// (e.g. [{}, {}, ...]) when multiple objects match the query.  Instead
+// of requiring client code to know that SFDC returns different types
+// based on number of results, allow clients to always pass in a slice.
 func ParseSFJSON(msg []byte, out interface{}) error {
 	err := forcejson.Unmarshal(msg, out)
 
