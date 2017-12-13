@@ -1,6 +1,9 @@
 package force
 
-import "testing"
+import (
+	"net/http"
+	"testing"
+)
 
 func TestHasAccess(t *testing.T) {
 
@@ -19,6 +22,7 @@ func TestHasAccess(t *testing.T) {
 		apiSObjectDescriptions: make(map[string]*SObjectDescription),
 		apiVersion:             version,
 		oauth:                  oauth,
+		httpClient:             http.DefaultClient,
 	}
 
 	apiName := "AbadCompliance___c"

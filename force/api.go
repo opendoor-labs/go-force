@@ -2,6 +2,7 @@ package force
 
 import (
 	"fmt"
+	"net/http"
 )
 
 const (
@@ -27,6 +28,7 @@ type ForceApi struct {
 	apiMaxBatchSize        int64
 	logger                 ForceApiLogger
 	logPrefix              string
+	httpClient             HttpClient
 }
 
 type RefreshTokenResponse struct {
@@ -168,6 +170,10 @@ type ChildRelationship struct {
 	CascadeDelete       bool   `json:"cascadeDelete"`
 	RestrictedDelete    bool   `json:"restrictedDelete"`
 	RelationshipName    string `json:"relationshipName"`
+}
+
+type HttpClient interface {
+	Do(req *http.Request) (*http.Response, error)
 }
 
 type RestAPI interface {

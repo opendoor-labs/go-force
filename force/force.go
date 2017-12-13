@@ -5,6 +5,7 @@ package force
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 )
 
@@ -19,7 +20,7 @@ const (
 )
 
 func Create(version, clientId, clientSecret, userName, password, securityToken,
-	environment string) (*ForceApi, error) {
+	environment string, httpClient HttpClient) (*ForceApi, error) {
 	oauth := &forceOauth{
 		clientId:      clientId,
 		clientSecret:  clientSecret,
@@ -27,6 +28,7 @@ func Create(version, clientId, clientSecret, userName, password, securityToken,
 		password:      password,
 		securityToken: securityToken,
 		environment:   environment,
+		httpClient:    httpClient,
 	}
 
 	forceApi := &ForceApi{
@@ -35,6 +37,7 @@ func Create(version, clientId, clientSecret, userName, password, securityToken,
 		apiSObjectDescriptions: make(map[string]*SObjectDescription),
 		apiVersion:             version,
 		oauth:                  oauth,
+		httpClient:             httpClient,
 	}
 
 	// Init oauth
@@ -56,11 +59,12 @@ func Create(version, clientId, clientSecret, userName, password, securityToken,
 	return forceApi, nil
 }
 
-func CreateWithAccessToken(version, clientId, accessToken, instanceUrl string) (*ForceApi, error) {
+func CreateWithAccessToken(version, clientId, accessToken, instanceUrl string, httpClient HttpClient) (*ForceApi, error) {
 	oauth := &forceOauth{
 		clientId:    clientId,
 		AccessToken: accessToken,
 		InstanceUrl: instanceUrl,
+		httpClient:  httpClient,
 	}
 
 	forceApi := &ForceApi{
@@ -69,6 +73,7 @@ func CreateWithAccessToken(version, clientId, accessToken, instanceUrl string) (
 		apiSObjectDescriptions: make(map[string]*SObjectDescription),
 		apiVersion:             version,
 		oauth:                  oauth,
+		httpClient:             httpClient,
 	}
 
 	// We need to check for oath correctness here, since we are not generating the token ourselves.
@@ -84,11 +89,12 @@ func CreateWithAccessToken(version, clientId, accessToken, instanceUrl string) (
 	return forceApi, nil
 }
 
-func CreateWithRefreshToken(version, clientId, accessToken, instanceUrl string) (*ForceApi, error) {
+func CreateWithRefreshToken(version, clientId, accessToken, instanceUrl string, httpClient HttpClient) (*ForceApi, error) {
 	oauth := &forceOauth{
 		clientId:    clientId,
 		AccessToken: accessToken,
 		InstanceUrl: instanceUrl,
+		httpClient:  httpClient,
 	}
 
 	forceApi := &ForceApi{
@@ -97,6 +103,7 @@ func CreateWithRefreshToken(version, clientId, accessToken, instanceUrl string) 
 		apiSObjectDescriptions: make(map[string]*SObjectDescription),
 		apiVersion:             version,
 		oauth:                  oauth,
+		httpClient:             httpClient,
 	}
 
 	// obtain access token
@@ -119,7 +126,7 @@ func CreateWithRefreshToken(version, clientId, accessToken, instanceUrl string) 
 
 // Used when running tests.
 func createTest() *ForceApi {
-	forceApi, err := Create(testVersion, testClientId, testClientSecret, testUserName, testPassword, testSecurityToken, testEnvironment)
+	forceApi, err := Create(testVersion, testClientId, testClientSecret, testUserName, testPassword, testSecurityToken, testEnvironment, http.DefaultClient)
 	if err != nil {
 		fmt.Printf("Unable to create ForceApi for test: %v", err)
 		os.Exit(1)

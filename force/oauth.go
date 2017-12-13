@@ -31,6 +31,7 @@ type forceOauth struct {
 	password      string
 	securityToken string
 	environment   string
+	httpClient    HttpClient
 }
 
 func (oauth *forceOauth) Validate() error {
@@ -80,7 +81,7 @@ func (oauth *forceOauth) Authenticate() error {
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", responseType)
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := oauth.httpClient.Do(req)
 	if err != nil {
 		return fmt.Errorf("Error sending authentication request: %v", err)
 	}
