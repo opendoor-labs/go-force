@@ -38,12 +38,6 @@ type SObjectAttributes struct {
 	Url  string `force:"url,omitempty"`
 }
 
-// Implementing this here because most objects don't have an external id and as such this is not needed.
-// Feel free to override this function when embedding the BaseSObject in other structs.
-func (b BaseSObject) ExternalIdAPIName() string {
-	return ""
-}
-
 // Fields that are returned in every query response. Use this to build custom structs.
 // type MyCustomQueryResponse struct {
 // 	BaseQuery
