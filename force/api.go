@@ -177,19 +177,23 @@ type HttpClient interface {
 }
 
 type RestAPI interface {
+	DeleteSObject(id string, in SObject) (err error)
+	DeleteSObjectByExternalId(externalKey, externalId string, in SObject) (err error)
 	DescribeSObjects() (map[string]*SObjectMetaData, error)
 	DescribeSObject(in SObject) (resp *SObjectDescription, err error)
-	GetSObject(id string, fields []string, out SObject) (err error)
-	InsertSObject(in SObject) (resp *SObjectResponse, err error)
-	UpdateSObject(id string, in SObject) (err error)
-	DeleteSObject(id string, in SObject) (err error)
-	GetSObjectByExternalId(externalKey, externalId string, fields []string, out SObject) (statusCode int, err error)
-	UpsertSObjectByExternalId(externalKey string, externalId string, in SObject) (responseCode int, resp *SObjectResponse, err error)
-	DeleteSObjectByExternalId(externalKey, externalId string, in SObject) (err error)
-	GetInstanceURL() string
-	GetAccessToken() string
-	RefreshToken() error
 	HasAccess(objectNames []string) bool
+	InsertSObject(in SObject) (resp *SObjectResponse, err error)
+	GetAccessToken() string
+	GetInstanceURL() string
+	GetLimits() (*Limits, error)
+	GetSObject(id string, fields []string, out SObject) (err error)
+	GetSObjectByExternalId(externalKey, externalId string, fields []string, out SObject) (statusCode int, err error)
+	Query(query string, out interface{}) (err error)
+	QueryAll(query string, out interface{}) (err error)
+	QueryNext(uri string, out interface{}) (err error)
+	RefreshToken() error
+	UpdateSObject(id string, in SObject) (err error)
+	UpsertSObjectByExternalId(externalKey string, externalId string, in SObject) (responseCode int, resp *SObjectResponse, err error)
 }
 
 func (forceApi *ForceApi) getApiResources() error {
