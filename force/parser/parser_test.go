@@ -14,6 +14,8 @@ type Key struct {
 	Key *string `json:"key"`
 }
 
+type Keys []Key
+
 var _ = Describe("Parser", func() {
 	var (
 		jsonArray = []byte(`[
@@ -27,14 +29,20 @@ var _ = Describe("Parser", func() {
 
 		slice []Key
 		key   Key
+		keys  Keys
 	)
 
 	BeforeEach(func() {
 		slice = []Key{}
+		keys = Keys{}
 	})
 
 	Describe("IsSlicePtr", func() {
-		It("should be true for a slice", func() {
+		It("should be true for a pointer to a slice type", func() {
+			Expect(parser.IsSlicePtr(&keys)).To(BeTrue())
+		})
+
+		It("should be true for a pointer to a slice", func() {
 			Expect(parser.IsSlicePtr(&slice)).To(BeTrue())
 		})
 
