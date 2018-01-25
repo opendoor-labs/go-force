@@ -1,7 +1,3 @@
-// Copyright 2011 The Go Authors.  All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
 package forcejson_test
 
 import (
@@ -11,7 +7,12 @@ import (
 	"log"
 	"os"
 	"strings"
+
+	. "github.com/onsi/ginkgo"
 )
+
+var _ = Describe("Testing with Ginkgo", func() {
+})
 
 func ExampleMarshal() {
 	type ColorGroup struct {
@@ -29,8 +30,7 @@ func ExampleMarshal() {
 		fmt.Println("error:", err)
 	}
 	os.Stdout.Write(b)
-	// Output:
-	// {"ID":1,"Name":"Reds","Colors":["Crimson","Red","Ruby","Maroon"]}
+
 }
 
 func ExampleUnmarshal() {
@@ -48,11 +48,9 @@ func ExampleUnmarshal() {
 		fmt.Println("error:", err)
 	}
 	fmt.Printf("%+v", animals)
-	// Output:
-	// [{Name:Platypus Order:Monotremata} {Name:Quoll Order:Dasyuromorphia}]
+
 }
 
-// This example uses a Decoder to decode a stream of distinct JSON values.
 func ExampleDecoder() {
 	const jsonStream = `
 		{"Name": "Ed", "Text": "Knock knock."}
@@ -74,19 +72,13 @@ func ExampleDecoder() {
 		}
 		fmt.Printf("%s: %s\n", m.Name, m.Text)
 	}
-	// Output:
-	// Ed: Knock knock.
-	// Sam: Who's there?
-	// Ed: Go fmt.
-	// Sam: Go fmt who?
-	// Ed: Go fmt yourself!
+
 }
 
-// This example uses RawMessage to delay parsing part of a JSON message.
 func ExampleRawMessage() {
 	type Color struct {
 		Space string
-		Point json.RawMessage // delay parsing until we know the color space
+		Point json.RawMessage
 	}
 	type RGB struct {
 		R uint8
@@ -123,7 +115,5 @@ func ExampleRawMessage() {
 		}
 		fmt.Println(c.Space, dst)
 	}
-	// Output:
-	// YCbCr &{255 0 -10}
-	// RGB &{98 218 255}
+
 }

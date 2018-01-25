@@ -1,12 +1,35 @@
-// Copyright 2011 The Go Authors.  All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
 package forcejson
 
 import (
-	"testing"
+	. "github.com/onsi/ginkgo"
 )
+
+var _ = Describe("Testing with Ginkgo", func() {
+	It("struct tag object key", func() {
+
+		for _, tt := range structTagObjectKeyTests {
+			b, err := Marshal(tt.raw)
+			if err != nil {
+				GinkgoT().Fatalf("Marshal(%#q) failed: %v", tt.raw, err)
+			}
+			var f interface{}
+			err = Unmarshal(b, &f)
+			if err != nil {
+				GinkgoT().Fatalf("Unmarshal(%#q) failed: %v", b, err)
+			}
+			for i, v := range f.(map[string]interface{}) {
+				switch i {
+				case tt.key:
+					if s, ok := v.(string); !ok || s != tt.value {
+						GinkgoT().Fatalf("Unexpected value: %#q, want %v", s, tt.value)
+					}
+				default:
+					GinkgoT().Fatalf("Unexpected key: %#q, from %#q", i, b)
+				}
+			}
+		}
+	})
+})
 
 type basicLatin2xTag struct {
 	V string `force:"$%-/"`
@@ -37,11 +60,11 @@ type miscPlaneTag struct {
 }
 
 type percentSlashTag struct {
-	V string `force:"text/html%"` // http://golang.org/issue/2718
+	V string `force:"text/html%"`
 }
 
 type punctuationTag struct {
-	V string `force:"!#$%&()*+-./:<=>?@[]^_{|}~"` // http://golang.org/issue/3546
+	V string `force:"!#$%&()*+-./:<=>?@[]^_{|}~"`
 }
 
 type emptyTag struct {
@@ -88,28 +111,4 @@ var structTagObjectKeyTests = []struct {
 	{punctuationTag{"Union Rags"}, "Union Rags", "!#$%&()*+-./:<=>?@[]^_{|}~"},
 	{spaceTag{"Perreddu"}, "Perreddu", "With space"},
 	{unicodeTag{"Loukanikos"}, "Loukanikos", "Ελλάδα"},
-}
-
-func TestStructTagObjectKey(t *testing.T) {
-	for _, tt := range structTagObjectKeyTests {
-		b, err := Marshal(tt.raw)
-		if err != nil {
-			t.Fatalf("Marshal(%#q) failed: %v", tt.raw, err)
-		}
-		var f interface{}
-		err = Unmarshal(b, &f)
-		if err != nil {
-			t.Fatalf("Unmarshal(%#q) failed: %v", b, err)
-		}
-		for i, v := range f.(map[string]interface{}) {
-			switch i {
-			case tt.key:
-				if s, ok := v.(string); !ok || s != tt.value {
-					t.Fatalf("Unexpected value: %#q, want %v", s, tt.value)
-				}
-			default:
-				t.Fatalf("Unexpected key: %#q, from %#q", i, b)
-			}
-		}
-	}
 }

@@ -1,28 +1,27 @@
-// Copyright 2011 The Go Authors.  All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
 package forcejson
 
 import (
-	"testing"
+	. "github.com/onsi/ginkgo"
 )
 
-func TestTagParsing(t *testing.T) {
-	name, opts := parseTag("field,foobar,foo")
-	if name != "field" {
-		t.Fatalf("name = %q, want field", name)
-	}
-	for _, tt := range []struct {
-		opt  string
-		want bool
-	}{
-		{"foobar", true},
-		{"foo", true},
-		{"bar", false},
-	} {
-		if opts.Contains(tt.opt) != tt.want {
-			t.Errorf("Contains(%q) = %v", tt.opt, !tt.want)
+var _ = Describe("Testing with Ginkgo", func() {
+	It("tag parsing", func() {
+
+		name, opts := parseTag("field,foobar,foo")
+		if name != "field" {
+			GinkgoT().Fatalf("name = %q, want field", name)
 		}
-	}
-}
+		for _, tt := range []struct {
+			opt  string
+			want bool
+		}{
+			{"foobar", true},
+			{"foo", true},
+			{"bar", false},
+		} {
+			if opts.Contains(tt.opt) != tt.want {
+				GinkgoT().Errorf("Contains(%q) = %v", tt.opt, !tt.want)
+			}
+		}
+	})
+})
