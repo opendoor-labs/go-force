@@ -160,7 +160,7 @@ func (forceApi *ForceApi) GetSFIDsByExternalId(apiName, externalKey, externalId 
 		return forceApi.getMultipleSFIDs(uri, params)
 	}
 
-	return []string{}, statusCode, err
+	return nil, statusCode, err
 }
 
 func (forceApi *ForceApi) GetSObjectByExternalId(externalKey, externalId string, fields []string, out SObject) (statusCode int, err error) {

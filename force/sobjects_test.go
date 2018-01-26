@@ -70,7 +70,7 @@ var _ = Describe("Sobjects", func() {
 				actualIds, status, err := forceApi.GetSFIDsByExternalId("APIName", "ExKey", "ExId-123")
 				Expect(err).To(HaveOccurred())
 				Expect(status).To(Equal(400))
-				Expect(actualIds).To(Equal([]string{}))
+				Expect(actualIds).To(BeNil())
 			})
 		})
 	})
