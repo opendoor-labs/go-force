@@ -139,6 +139,23 @@ type FakeRestAPI struct {
 		result1 int
 		result2 error
 	}
+	GetSFIDsByExternalIdStub        func(apiName, externalKey, externalId string) ([]string, int, error)
+	getSFIDsByExternalIdMutex       sync.RWMutex
+	getSFIDsByExternalIdArgsForCall []struct {
+		apiName     string
+		externalKey string
+		externalId  string
+	}
+	getSFIDsByExternalIdReturns struct {
+		result1 []string
+		result2 int
+		result3 error
+	}
+	getSFIDsByExternalIdReturnsOnCall map[int]struct {
+		result1 []string
+		result2 int
+		result3 error
+	}
 	QueryStub        func(query string, out interface{}) (err error)
 	queryMutex       sync.RWMutex
 	queryArgsForCall []struct {
@@ -751,6 +768,62 @@ func (fake *FakeRestAPI) GetSObjectByExternalIdReturnsOnCall(i int, result1 int,
 	}{result1, result2}
 }
 
+func (fake *FakeRestAPI) GetSFIDsByExternalId(apiName string, externalKey string, externalId string) ([]string, int, error) {
+	fake.getSFIDsByExternalIdMutex.Lock()
+	ret, specificReturn := fake.getSFIDsByExternalIdReturnsOnCall[len(fake.getSFIDsByExternalIdArgsForCall)]
+	fake.getSFIDsByExternalIdArgsForCall = append(fake.getSFIDsByExternalIdArgsForCall, struct {
+		apiName     string
+		externalKey string
+		externalId  string
+	}{apiName, externalKey, externalId})
+	fake.recordInvocation("GetSFIDsByExternalId", []interface{}{apiName, externalKey, externalId})
+	fake.getSFIDsByExternalIdMutex.Unlock()
+	if fake.GetSFIDsByExternalIdStub != nil {
+		return fake.GetSFIDsByExternalIdStub(apiName, externalKey, externalId)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2, ret.result3
+	}
+	return fake.getSFIDsByExternalIdReturns.result1, fake.getSFIDsByExternalIdReturns.result2, fake.getSFIDsByExternalIdReturns.result3
+}
+
+func (fake *FakeRestAPI) GetSFIDsByExternalIdCallCount() int {
+	fake.getSFIDsByExternalIdMutex.RLock()
+	defer fake.getSFIDsByExternalIdMutex.RUnlock()
+	return len(fake.getSFIDsByExternalIdArgsForCall)
+}
+
+func (fake *FakeRestAPI) GetSFIDsByExternalIdArgsForCall(i int) (string, string, string) {
+	fake.getSFIDsByExternalIdMutex.RLock()
+	defer fake.getSFIDsByExternalIdMutex.RUnlock()
+	return fake.getSFIDsByExternalIdArgsForCall[i].apiName, fake.getSFIDsByExternalIdArgsForCall[i].externalKey, fake.getSFIDsByExternalIdArgsForCall[i].externalId
+}
+
+func (fake *FakeRestAPI) GetSFIDsByExternalIdReturns(result1 []string, result2 int, result3 error) {
+	fake.GetSFIDsByExternalIdStub = nil
+	fake.getSFIDsByExternalIdReturns = struct {
+		result1 []string
+		result2 int
+		result3 error
+	}{result1, result2, result3}
+}
+
+func (fake *FakeRestAPI) GetSFIDsByExternalIdReturnsOnCall(i int, result1 []string, result2 int, result3 error) {
+	fake.GetSFIDsByExternalIdStub = nil
+	if fake.getSFIDsByExternalIdReturnsOnCall == nil {
+		fake.getSFIDsByExternalIdReturnsOnCall = make(map[int]struct {
+			result1 []string
+			result2 int
+			result3 error
+		})
+	}
+	fake.getSFIDsByExternalIdReturnsOnCall[i] = struct {
+		result1 []string
+		result2 int
+		result3 error
+	}{result1, result2, result3}
+}
+
 func (fake *FakeRestAPI) Query(query string, out interface{}) (err error) {
 	fake.queryMutex.Lock()
 	ret, specificReturn := fake.queryReturnsOnCall[len(fake.queryArgsForCall)]
@@ -1068,6 +1141,8 @@ func (fake *FakeRestAPI) Invocations() map[string][][]interface{} {
 	defer fake.getSObjectMutex.RUnlock()
 	fake.getSObjectByExternalIdMutex.RLock()
 	defer fake.getSObjectByExternalIdMutex.RUnlock()
+	fake.getSFIDsByExternalIdMutex.RLock()
+	defer fake.getSFIDsByExternalIdMutex.RUnlock()
 	fake.queryMutex.RLock()
 	defer fake.queryMutex.RUnlock()
 	fake.queryAllMutex.RLock()
