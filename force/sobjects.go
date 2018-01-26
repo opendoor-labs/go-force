@@ -137,7 +137,7 @@ func (forceApi *ForceApi) getMultipleSFIDs(uri string, params url.Values) ([]str
 	uris := []string{}
 	statusCode, err := forceApi.Get(uri, params, &uris)
 	if err != nil {
-		return []string{}, statusCode, err
+		return nil, statusCode, err
 	}
 
 	return idsFromURIs(uris), statusCode, nil
