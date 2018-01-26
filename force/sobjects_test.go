@@ -2,11 +2,96 @@ package force
 
 import (
 	"math/rand"
-	"testing"
+
 	"time"
 
+	. "github.com/onsi/ginkgo"
 	"github.com/opendoor-labs/go-force/sobjects"
 )
+
+var _ = Describe("Testing with Ginkgo", func() {
+	It("describe sobjects", func() {
+
+		forceAPI := createTest()
+		objects, err := forceAPI.DescribeSObjects()
+		if err != nil {
+			GinkgoT().Fatal("Failed to retrieve SObjects", err)
+		}
+		GinkgoT().Logf("SObjects for Account Retrieved: %+v", objects)
+	})
+	It("describe s object", func() {
+
+		forceApi := createTest()
+		acc := &sobjects.Account{}
+
+		desc, err := forceApi.DescribeSObject(acc)
+		if err != nil {
+			GinkgoT().Fatalf("Cannot retrieve SObject Description for Account SObject: %v", err)
+		}
+		GinkgoT().Logf("SObject Description for Account Retrieved: %+v", desc)
+	})
+	It("get s object", func() {
+
+		forceApi := createTest()
+
+		acc := &sobjects.Account{}
+
+		err := forceApi.GetSObject(AccountId, nil, acc)
+		if err != nil {
+			GinkgoT().Fatalf("Cannot retrieve SObject Account: %v", err)
+		}
+		GinkgoT().Logf("SObject Account Retrieved: %+v", acc)
+
+		customObject := &CustomSObject{}
+
+		err = forceApi.GetSObject(CustomObjectId, nil, customObject)
+		if err != nil {
+			GinkgoT().Fatalf("Cannot retrieve SObject CustomObject: %v", err)
+		}
+		GinkgoT().Logf("SObject CustomObject Retrieved: %+v", customObject)
+
+		fields := []string{"Name", "Id"}
+
+		accFields := &sobjects.Account{}
+
+		err = forceApi.GetSObject(AccountId, fields, accFields)
+		if err != nil {
+			GinkgoT().Fatalf("Cannot retrieve SObject Account fields: %v", err)
+		}
+		GinkgoT().Logf("SObject Account Name and Id Retrieved: %+v", accFields)
+	})
+	It("update s object", func() {
+
+		forceApi := createTest()
+
+		rand.Seed(time.Now().UTC().UnixNano())
+		someText := randomString(10)
+
+		acc := &sobjects.Account{}
+		acc.Name = someText
+
+		err := forceApi.UpdateSObject(AccountId, acc)
+		if err != nil {
+			GinkgoT().Fatalf("Cannot update SObject Account: %v", err)
+		}
+
+		err = forceApi.GetSObject(AccountId, nil, acc)
+		if err != nil {
+			GinkgoT().Fatalf("Cannot retrieve SObject Account: %v", err)
+		}
+
+		if acc.Name != someText {
+			GinkgoT().Fatalf("Update SObject Account failed. Failed to persist.")
+		}
+		GinkgoT().Logf("Updated SObject Account: %+v", acc)
+	})
+	It("insert delete s object", func() {
+
+		forceApi := createTest()
+		objectId := insertSObject(forceApi, GinkgoT())
+		deleteSObject(forceApi, GinkgoT(), objectId)
+	})
+})
 
 const (
 	AccountId      = "001i000000RxW18"
@@ -23,102 +108,11 @@ func (t *CustomSObject) APIName() string {
 	return "CustomObject__c"
 }
 
-func TestDescribeSobjects(t *testing.T) {
-	forceAPI := createTest()
-	objects, err := forceAPI.DescribeSObjects()
-	if err != nil {
-		t.Fatal("Failed to retrieve SObjects", err)
-	}
-	t.Logf("SObjects for Account Retrieved: %+v", objects)
-}
+func insertSObject(forceApi *ForceApi, t GinkgoTInterface) string {
 
-func TestDescribeSObject(t *testing.T) {
-	forceApi := createTest()
-	acc := &sobjects.Account{}
-
-	desc, err := forceApi.DescribeSObject(acc)
-	if err != nil {
-		t.Fatalf("Cannot retrieve SObject Description for Account SObject: %v", err)
-	}
-
-	t.Logf("SObject Description for Account Retrieved: %+v", desc)
-}
-
-func TestGetSObject(t *testing.T) {
-	forceApi := createTest()
-	// Test Standard Object
-	acc := &sobjects.Account{}
-
-	err := forceApi.GetSObject(AccountId, nil, acc)
-	if err != nil {
-		t.Fatalf("Cannot retrieve SObject Account: %v", err)
-	}
-
-	t.Logf("SObject Account Retrieved: %+v", acc)
-
-	// Test Custom Object
-	customObject := &CustomSObject{}
-
-	err = forceApi.GetSObject(CustomObjectId, nil, customObject)
-	if err != nil {
-		t.Fatalf("Cannot retrieve SObject CustomObject: %v", err)
-	}
-
-	t.Logf("SObject CustomObject Retrieved: %+v", customObject)
-
-	// Test Custom Object Field Retrieval
-	fields := []string{"Name", "Id"}
-
-	accFields := &sobjects.Account{}
-
-	err = forceApi.GetSObject(AccountId, fields, accFields)
-	if err != nil {
-		t.Fatalf("Cannot retrieve SObject Account fields: %v", err)
-	}
-
-	t.Logf("SObject Account Name and Id Retrieved: %+v", accFields)
-}
-
-func TestUpdateSObject(t *testing.T) {
-	forceApi := createTest()
-	// Need some random text for updating a field.
 	rand.Seed(time.Now().UTC().UnixNano())
 	someText := randomString(10)
 
-	// Test Standard Object
-	acc := &sobjects.Account{}
-	acc.Name = someText
-
-	err := forceApi.UpdateSObject(AccountId, acc)
-	if err != nil {
-		t.Fatalf("Cannot update SObject Account: %v", err)
-	}
-
-	// Read back and verify
-	err = forceApi.GetSObject(AccountId, nil, acc)
-	if err != nil {
-		t.Fatalf("Cannot retrieve SObject Account: %v", err)
-	}
-
-	if acc.Name != someText {
-		t.Fatalf("Update SObject Account failed. Failed to persist.")
-	}
-
-	t.Logf("Updated SObject Account: %+v", acc)
-}
-
-func TestInsertDeleteSObject(t *testing.T) {
-	forceApi := createTest()
-	objectId := insertSObject(forceApi, t)
-	deleteSObject(forceApi, t, objectId)
-}
-
-func insertSObject(forceApi *ForceApi, t *testing.T) string {
-	// Need some random text for name field.
-	rand.Seed(time.Now().UTC().UnixNano())
-	someText := randomString(10)
-
-	// Test Standard Object
 	acc := &sobjects.Account{}
 	acc.Name = someText
 
@@ -134,8 +128,8 @@ func insertSObject(forceApi *ForceApi, t *testing.T) string {
 	return resp.Id
 }
 
-func deleteSObject(forceApi *ForceApi, t *testing.T, id string) {
-	// Test Standard Object
+func deleteSObject(forceApi *ForceApi, t GinkgoTInterface, id string) {
+
 	acc := &sobjects.Account{}
 
 	err := forceApi.DeleteSObject(id, acc)
@@ -143,7 +137,6 @@ func deleteSObject(forceApi *ForceApi, t *testing.T, id string) {
 		t.Fatalf("Delete SObject Account failed: %v", err)
 	}
 
-	// Read back and verify
 	err = forceApi.GetSObject(id, nil, acc)
 	if err == nil {
 		t.Fatalf("Delete SObject Account failed, was able to retrieve deleted object: %+v", acc)

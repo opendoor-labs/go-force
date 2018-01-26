@@ -1,4 +1,4 @@
-package parser_test
+package forcejson_test
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestForce(t *testing.T) {
+func TestForcejson(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(GinkgoT(), "Parser Suite")
+	RunSpecs(t, "Forcejson Suite")
 }

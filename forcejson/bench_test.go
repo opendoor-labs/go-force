@@ -1,13 +1,3 @@
-// Copyright 2011 The Go Authors.  All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
-// Large data benchmark.
-// The JSON data is a summary of agl's changes in the
-// go, webkit, and chromium open source projects.
-// We benchmark converting between the JSON form
-// and in-memory data structures.
-
 package forcejson
 
 import (
@@ -16,7 +6,12 @@ import (
 	"io/ioutil"
 	"os"
 	"testing"
+
+	. "github.com/onsi/ginkgo"
 )
+
+var _ = Describe("Testing with Ginkgo", func() {
+})
 
 type codeResponse struct {
 	Tree     *codeNode `force:"tree"`
@@ -115,7 +110,7 @@ func BenchmarkCodeDecoder(b *testing.B) {
 	var r codeResponse
 	for i := 0; i < b.N; i++ {
 		buf.Write(codeJSON)
-		// hide EOF
+
 		buf.WriteByte('\n')
 		buf.WriteByte('\n')
 		buf.WriteByte('\n')

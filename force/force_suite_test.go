@@ -1,4 +1,4 @@
-package parser_test
+package force_test
 
 import (
 	"testing"
@@ -9,5 +9,5 @@ import (
 
 func TestForce(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(GinkgoT(), "Parser Suite")
+	RunSpecs(t, "Force Suite")
 }
