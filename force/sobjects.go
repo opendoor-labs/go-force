@@ -3,6 +3,7 @@ package force
 import (
 	"bytes"
 	"fmt"
+	"net/http"
 	"net/url"
 	"strings"
 
@@ -134,9 +135,14 @@ func (forceApi *ForceApi) GetSFIDsByExternalId(apiName, externalKey, externalId 
 		return []string{sobj.Id}, statusCode, nil
 	}
 
-	if statusCode != 300 {
+	if statusCode != http.StatusMultipleChoices {
 		return []string{}, statusCode, err
 	}
+
+	// https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/errorcodes.htm
+	// Status code 300 (StatusMultipleChoices) is returned when an external
+	// ID exists in more than one record. The response body contains the
+	// list of matching records.
 
 	// We don't have access to the json that was returned, so make the
 	// same call passing in a slice to unmarshal into.
