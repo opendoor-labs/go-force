@@ -188,6 +188,7 @@ type RestAPI interface {
 	GetLimits() (*Limits, error)
 	GetSObject(id string, fields []string, out SObject) (err error)
 	GetSObjectByExternalId(externalKey, externalId string, fields []string, out SObject) (statusCode int, err error)
+	GetSFIDsByExternalId(apiName, externalKey, externalId string) ([]string, int, error)
 	Query(query string, out interface{}) (err error)
 	QueryAll(query string, out interface{}) (err error)
 	QueryNext(uri string, out interface{}) (err error)

@@ -3,8 +3,11 @@ package force
 import (
 	"bytes"
 	"fmt"
+	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/opendoor-labs/go-force/sobjects"
 )
 
 // Interface all standard and custom objects must implement. Needed for uri generation.
@@ -110,6 +113,54 @@ func (forceApi *ForceApi) DeleteSObject(id string, in SObject) (err error) {
 	err = forceApi.Delete(uri, nil)
 
 	return
+}
+
+func idsFromURIs(uris []string) []string {
+	ids := make([]string, len(uris))
+	for i, uri := range uris {
+		parts := strings.Split(uri, "/")
+		ids[i] = parts[len(parts)-1]
+	}
+	return ids
+}
+
+func (forceApi *ForceApi) getSingleSFID(uri string, params url.Values) (string, int, error) {
+	sobj := sobjects.BaseSObject{}
+	statusCode, err := forceApi.Get(uri, params, &sobj)
+	return sobj.Id, statusCode, err
+}
+
+func (forceApi *ForceApi) getMultipleSFIDs(uri string, params url.Values) ([]string, int, error) {
+	// We don't have access to the json that was returned, so make the
+	// same call as was made in getSingleSFID() passing in a slice to
+	// unmarshal into.
+	uris := []string{}
+	statusCode, err := forceApi.Get(uri, params, &uris)
+	if err != nil {
+		return nil, statusCode, err
+	}
+
+	return idsFromURIs(uris), statusCode, nil
+}
+
+func (forceApi *ForceApi) GetSFIDsByExternalId(apiName, externalKey, externalId string) ([]string, int, error) {
+	uri := fmt.Sprintf("%v/%v/%v", forceApi.apiSObjects[apiName].URLs[sObjectKey], externalKey, externalId)
+	params := url.Values{"fields": []string{"Id"}}
+
+	sfid, statusCode, err := forceApi.getSingleSFID(uri, params)
+	if err == nil {
+		return []string{sfid}, statusCode, nil
+	}
+
+	// https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/errorcodes.htm
+	// Status code 300 (StatusMultipleChoices) is returned when an external
+	// ID exists in more than one record. The response body contains the
+	// list of matching records.
+	if statusCode == http.StatusMultipleChoices {
+		return forceApi.getMultipleSFIDs(uri, params)
+	}
+
+	return nil, statusCode, err
 }
 
 func (forceApi *ForceApi) GetSObjectByExternalId(externalKey, externalId string, fields []string, out SObject) (statusCode int, err error) {

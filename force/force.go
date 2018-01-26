@@ -51,6 +51,7 @@ func Create(version, clientId, clientSecret, userName, password, securityToken,
 	if err != nil {
 		return nil, err
 	}
+
 	err = forceApi.getApiSObjects()
 	if err != nil {
 		return nil, err
