@@ -131,6 +131,9 @@ func (forceApi *ForceApi) getSingleSFID(uri string, params url.Values) (string, 
 }
 
 func (forceApi *ForceApi) getMultipleSFIDs(uri string, params url.Values) ([]string, int, error) {
+	// We don't have access to the json that was returned, so make the
+	// same call as was made in getSingleSFID() passing in a slice to
+	// unmarshal into.
 	uris := []string{}
 	statusCode, err := forceApi.Get(uri, params, &uris)
 	if err != nil {
@@ -153,9 +156,6 @@ func (forceApi *ForceApi) GetSFIDsByExternalId(apiName, externalKey, externalId 
 	// Status code 300 (StatusMultipleChoices) is returned when an external
 	// ID exists in more than one record. The response body contains the
 	// list of matching records.
-
-	// We don't have access to the json that was returned, so make the
-	// same call passing in a slice to unmarshal into.
 	if statusCode == http.StatusMultipleChoices {
 		return forceApi.getMultipleSFIDs(uri, params)
 	}
