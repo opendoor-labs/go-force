@@ -59,5 +59,19 @@ var _ = Describe("Sobjects", func() {
 				Expect(status).To(Equal(300))
 			})
 		})
+
+		Context("request failed", func() {
+			It("should return the statusCode and the error", func() {
+				apiSObjectsResp := NewFakeResponse(multiURISObjectResponse, 400)
+				httpClient.DoReturnsOnCall(3, apiSObjectsResp, nil)
+				apiSObjectsResp = NewFakeResponse(multiURISObjectResponse, 400)
+				httpClient.DoReturnsOnCall(4, apiSObjectsResp, nil)
+
+				actualIds, status, err := forceApi.GetSFIDsByExternalId("APIName", "ExKey", "ExId-123")
+				Expect(err).To(HaveOccurred())
+				Expect(status).To(Equal(400))
+				Expect(actualIds).To(Equal([]string{}))
+			})
+		})
 	})
 })
